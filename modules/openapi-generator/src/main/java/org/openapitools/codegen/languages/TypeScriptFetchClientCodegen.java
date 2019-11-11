@@ -136,9 +136,9 @@ public class TypeScriptFetchClientCodegen extends AbstractTypeScriptClientCodege
         } else if (ModelUtils.isBinarySchema(p)) {
             return "Blob";
         } else if (ModelUtils.isDateSchema(p)) {
-            return "Date";
+            return "string";
         } else if (ModelUtils.isDateTimeSchema(p)) {
-            return "Date";
+            return "string";
         }
         return super.getTypeDeclaration(p);
     }
@@ -163,6 +163,10 @@ public class TypeScriptFetchClientCodegen extends AbstractTypeScriptClientCodege
                 if (Boolean.TRUE.equals(var.isEnum)) {
                     // behaviour for enum names is specific for Typescript Fetch, not using namespaces
                     var.datatypeWithEnum = var.datatypeWithEnum.replace(var.enumName, cm.classname + var.enumName);
+                }
+                if (Boolean.TRUE.equals(var.isDate) || Boolean.TRUE.equals((var.isDateTime))){
+                    var.isDate = false;
+                    var.isDateTime = false;
                 }
             }
             if (cm.parent != null) {
@@ -216,6 +220,18 @@ public class TypeScriptFetchClientCodegen extends AbstractTypeScriptClientCodege
 
     @Override
     public Map<String, Object> postProcessOperationsWithModels(Map<String, Object> operations, List<Object> allModels) {
+//        Map ops = (Map) operations.get("operations");
+//        List<CodegenOperation> list = (List<CodegenOperation>) ops.get("operation");
+//        for(CodegenOperation co : list) {
+//            if(co.allParams != null && co.allParams.size() > 0){
+//                for(CodegenParameter par : co.allParams) {
+//                    if(par.isDate || par.isDateTime) {
+//                        par.isDate = false;
+//                        par.isDateTime = false;
+//                    }
+//                }
+//            }
+//        }
         // Add supporting file only if we plan to generate files in /apis
         if (operations.size() > 0 && !addedApiIndex) {
             addedApiIndex = true;
